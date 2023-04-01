@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stack_overflow_users/core/app_route.dart';
-import 'package:stack_overflow_users/presentation/widgets/users/reputation/user_reputation_widget.dart';
 
+import '../../../core/app_route.dart';
 import '../../widgets/users/list/user_list_widget.dart';
+import '../../widgets/users/reputations/user_reputation_widget.dart';
+import '../settings/settings_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
   final DashboardNavigation navigation;
+  final int? selectedUserId;
 
-  const DashBoardScreen({super.key, required this.navigation});
+  const DashBoardScreen(
+      {super.key, required this.navigation, required this.selectedUserId});
 
   @override
   State<DashBoardScreen> createState() => _DashBoardScreenState();
@@ -25,9 +28,26 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant DashBoardScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedUserId != widget.selectedUserId ||
+        oldWidget.navigation != widget.navigation) {
+      setState(() {
+        _navigatedTab = widget.navigation;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
-      selectedIndex: DashboardNavigation.values.indexOf(_navigatedTab),
+      smallBreakpoint: const WidthPlatformBreakpoint(end: 800),
+      mediumBreakpoint: const WidthPlatformBreakpoint(begin: 800, end: 1200),
+      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1200),
+      selectedIndex: _navigatedTab == DashboardNavigation.users ||
+              _navigatedTab == DashboardNavigation.reputations
+          ? 0
+          : 1,
       onSelectedIndexChange: (int index) {
         setState(() {
           _navigatedTab = DashboardNavigation.values[index];
@@ -52,13 +72,19 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           label: 'Settings',
         ),
       ],
-      body: (_) => const UserListWidget(),
-      secondaryBody: _navigatedTab == DashboardNavigation.users
-          ? (_) => const UserReputationWidget()
+      body: (_) => _navigatedTab == DashboardNavigation.users
+          ? UserListWidget(
+              selectedUserId: widget.selectedUserId,
+            )
+          : _navigatedTab == DashboardNavigation.reputations
+              ? UserReputationsWidget(userId: widget.selectedUserId)
+              : const SettingsSreen(),
+      secondaryBody: _navigatedTab != DashboardNavigation.settings
+          ? (_) => UserReputationsWidget(userId: widget.selectedUserId)
           : null,
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
     );
   }
 }
 
-enum DashboardNavigation { users, settings }
+enum DashboardNavigation { users, reputations, settings }

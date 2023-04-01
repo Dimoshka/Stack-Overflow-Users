@@ -8,6 +8,7 @@ import '../presentation/screens/splash/splash_screen.dart';
 class AppRoute {
   static String splashRouteName = 'splash';
   static String dashBoardRouteName = 'dashboard';
+  static String reputationsRouteName = 'reputations';
   static String settingsBoardRouteName = 'settings';
 
   late final GoRouter _router;
@@ -24,15 +25,30 @@ class AppRoute {
                 _getTransition(state: state, child: const SplashScreen()),
             routes: [
               GoRoute(
-                name: dashBoardRouteName,
-                path: 'dashboard',
-                pageBuilder: (context, state) => _getTransition(
-                    state: state,
-                    child: DashBoardScreen(
-                      key: ValueKey(DashboardNavigation.users.name),
-                      navigation: DashboardNavigation.users,
-                    )),
-              ),
+                  name: dashBoardRouteName,
+                  path: 'dashboard',
+                  pageBuilder: (context, state) => _getTransition(
+                      state: state,
+                      child: DashBoardScreen(
+                        key: ValueKey(DashboardNavigation.users.name),
+                        selectedUserId: null,
+                        navigation: DashboardNavigation.users,
+                      )),
+                  routes: [
+                    GoRoute(
+                      name: reputationsRouteName,
+                      path: 'users/:userId/reputations',
+                      pageBuilder: (context, state) => _getTransition(
+                          state: state,
+                          child: DashBoardScreen(
+                            key: ValueKey(DashboardNavigation.reputations.name),
+                            selectedUserId: state.params.containsKey('userId')
+                                ? int.tryParse(state.params['userId'] ?? '')
+                                : null,
+                            navigation: DashboardNavigation.reputations,
+                          )),
+                    ),
+                  ]),
               GoRoute(
                 name: settingsBoardRouteName,
                 path: 'settings',
@@ -40,6 +56,7 @@ class AppRoute {
                     state: state,
                     child: DashBoardScreen(
                       key: ValueKey(DashboardNavigation.settings.name),
+                      selectedUserId: null,
                       navigation: DashboardNavigation.settings,
                     )),
               ),

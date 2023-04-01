@@ -1,10 +1,3 @@
-library serializers;
-
-import 'package:built_value/serializer.dart';
-import 'package:built_value/standard_json_plugin.dart';
-
-part 'models.g.dart';
-
-@SerializersFor([])
-final Serializers serializers =
-    (_$serializers.toBuilder()..addPlugin(StandardJsonPlugin())).build();
+export 'pagination_model.dart';
+export 'user_model.dart';
+export 'user_reputation_model.dart';

@@ -1,4 +1,7 @@
 {
   "appName": "Stack Overflow Users",
-  "oops": "Oops, something went wrong!"
+  "oops": "Oops, something went wrong!",
+  "search": "Search",
+  "theme": "Theme",
+  "darkMode": "Dark Mode"
 }
