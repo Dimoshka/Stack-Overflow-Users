@@ -4,4 +4,8 @@ abstract class PreferencesRepository {
 
   Future<int> getThemeMode();
   Future<void> saveThemeMode(int index);
+
+  Future<Set<String>> getBookmarks();
+  Future<void> addBookmark(String id);
+  Future<void> removeBookmark(String id);
 }

@@ -5,6 +5,7 @@ import '../../../domain/repositories/repositories.dart';
 
 const _isFirtRunKey = 'isFirstRun';
 const _themeModeKey = 'themeMode';
+const _bookmarksKey = 'bookmarks';
 
 @LazySingleton(as: PreferencesRepository)
 class SharedPreferencesRepositoryImpl implements PreferencesRepository {
@@ -25,4 +26,18 @@ class SharedPreferencesRepositoryImpl implements PreferencesRepository {
   @override
   Future<void> saveThemeMode(int index) =>
       _prefs.then((value) => value.setInt(_themeModeKey, index));
+
+  @override
+  Future<void> addBookmark(String id) => getBookmarks().then((bookmarks) =>
+      _prefs.then((value) => value.setStringList(
+          _bookmarksKey, List<String>.from(bookmarks)..add(id))));
+
+  @override
+  Future<void> removeBookmark(String id) => getBookmarks().then((bookmarks) =>
+      _prefs.then((value) => value.setStringList(
+          _bookmarksKey, List<String>.from(bookmarks..remove(id)))));
+
+  @override
+  Future<Set<String>> getBookmarks() => _prefs.then((value) => Set<String>.from(
+      value.getStringList(_bookmarksKey) ?? Set<String>.identity()));
 }

@@ -19,6 +19,16 @@ class UserModel extends Equatable {
     required this.inBookmark,
   });
 
+  UserModel copyWith(bool inBookmark) => UserModel(
+        id: id,
+        name: name,
+        avatar: avatar,
+        reputation: reputation,
+        location: location,
+        age: age,
+        inBookmark: inBookmark,
+      );
+
   @override
   List<Object?> get props => [id, name];
 }
