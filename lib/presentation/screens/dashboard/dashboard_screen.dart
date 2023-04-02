@@ -1,64 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:stack_overflow_users/core/app_route.dart';
-import 'package:stack_overflow_users/presentation/widgets/users/reputation/user_reputation_widget.dart';
 
+import '../../../core/app_route.dart';
 import '../../widgets/users/list/user_list_widget.dart';
+import '../settings/settings_screen.dart';
 
 class DashBoardScreen extends StatefulWidget {
-  final DashboardNavigation navigation;
+  final Widget body;
+  final Widget? secondaryBody;
 
-  const DashBoardScreen({super.key, required this.navigation});
+  const DashBoardScreen({super.key, required this.body, this.secondaryBody});
 
   @override
   State<DashBoardScreen> createState() => _DashBoardScreenState();
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
-  DashboardNavigation _navigatedTab = DashboardNavigation.users;
+  int _menuSelectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _navigatedTab = widget.navigation;
+    _menuSelectedIndex = widget.body is SettingsSreen ? 1 : 0;
+  }
+
+  @override
+  void didUpdateWidget(covariant DashBoardScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if ((oldWidget.body is UserListWidget && widget.body is! UserListWidget) ||
+        (oldWidget.secondaryBody == null && widget.secondaryBody != null)) {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
-      selectedIndex: DashboardNavigation.values.indexOf(_navigatedTab),
-      onSelectedIndexChange: (int index) {
-        setState(() {
-          _navigatedTab = DashboardNavigation.values[index];
-          context
-              .pushReplacementNamed(_navigatedTab == DashboardNavigation.users
-                  ? AppRoute.dashBoardRouteName
-                  : _navigatedTab == DashboardNavigation.settings
-                      ? AppRoute.settingsBoardRouteName
-                      : AppRoute.splashRouteName);
-        });
-      },
+      smallBreakpoint: const WidthPlatformBreakpoint(end: 800),
+      mediumBreakpoint: const WidthPlatformBreakpoint(begin: 800, end: 1200),
+      largeBreakpoint: const WidthPlatformBreakpoint(begin: 1200),
+      selectedIndex: _menuSelectedIndex,
+      internalAnimations: false,
+      onSelectedIndexChange: (int index) => setState(() {
+        _menuSelectedIndex = index;
+        context.goNamed(index == 1
+            ? AppRoute.settingsBoardRouteName
+            : AppRoute.usersRouteName);
+      }),
       useDrawer: false,
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.inbox_outlined),
-          selectedIcon: Icon(Icons.inbox),
-          label: 'Users',
+          icon: const Icon(Icons.inbox_outlined),
+          selectedIcon: const Icon(Icons.inbox),
+          label: AppLocalizations.of(context)!.users,
         ),
         NavigationDestination(
-          icon: Icon(Icons.settings_outlined),
-          selectedIcon: Icon(Icons.settings),
-          label: 'Settings',
+          icon: const Icon(Icons.settings_outlined),
+          selectedIcon: const Icon(Icons.settings),
+          label: AppLocalizations.of(context)!.settings,
         ),
       ],
-      body: (_) => const UserListWidget(),
-      secondaryBody: _navigatedTab == DashboardNavigation.users
-          ? (_) => const UserReputationWidget()
-          : null,
+      body: (_) => widget.body,
+      secondaryBody:
+          widget.secondaryBody != null ? (_) => widget.secondaryBody! : null,
       smallSecondaryBody: AdaptiveScaffold.emptyBuilder,
     );
   }
 }
-
-enum DashboardNavigation { users, settings }

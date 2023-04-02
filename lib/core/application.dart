@@ -6,6 +6,8 @@ import 'package:injectable/injectable.dart';
 import 'package:loading_animations/loading_animations.dart';
 
 import '../domain/usecases/usecases.dart';
+import '../presentation/widgets/users/list/cubit/user_list_cubit.dart';
+import '../presentation/widgets/users/reputations/cubit/user_reputation_cubit.dart';
 import 'app_route.dart';
 import 'cubit/application_cubit.dart';
 import 'resources/themes/dark_theme.dart';
@@ -20,6 +22,12 @@ class Application extends StatelessWidget {
       providers: [
         BlocProvider(
           create: (context) => GetIt.I.get<ApplicationCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => UserListCubit(),
+        ),
+        BlocProvider(
+          create: (context) => UserReputationCubit(),
         ),
         RepositoryProvider(
           create: (context) => GetIt.I<AppRoute>(),
