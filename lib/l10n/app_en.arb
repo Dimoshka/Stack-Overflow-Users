@@ -3,5 +3,7 @@
   "oops": "Oops, something went wrong!",
   "search": "Search",
   "theme": "Theme",
-  "darkMode": "Dark Mode"
+  "darkMode": "Dark Mode",
+  "users": "Users",
+  "settings": "Settings"
 }

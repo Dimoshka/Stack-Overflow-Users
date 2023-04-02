@@ -13,8 +13,14 @@ class RestApiRepository implements ApiRepository {
 
   RestApiRepository() {
     final converter = BuiltValueConverter(serializers);
-    final client =
-        ChopperClient(converter: converter, errorConverter: converter);
+    final client = ChopperClient(
+      converter: converter,
+      errorConverter: converter,
+      interceptors: [
+        HttpLoggingInterceptor(),
+        CurlInterceptor(),
+      ],
+    );
     _api = StackOverflowService.create(client);
   }
 

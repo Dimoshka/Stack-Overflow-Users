@@ -57,14 +57,12 @@ class _UserReputationsWidgetState extends State<UserReputationsWidget> {
         },
         child: BlocBuilder<UserReputationCubit, UserReputationState>(
           builder: (context, state) {
-            return Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: _reputations.items.length,
-                itemBuilder: (context, index) => UserReputationListItemWidget(
-                  reputation: _reputations.items[index],
-                  onTap: () {},
-                ),
+            return ListView.builder(
+              controller: _scrollController,
+              itemCount: _reputations.items.length,
+              itemBuilder: (context, index) => UserReputationListItemWidget(
+                reputation: _reputations.items[index],
+                onTap: () {},
               ),
             );
           },

@@ -11,7 +11,7 @@ import 'user_list_item_widget.dart';
 class UserListWidget extends StatefulWidget {
   final int? selectedUserId;
 
-  const UserListWidget({super.key, required this.selectedUserId});
+  const UserListWidget({super.key, this.selectedUserId});
 
   @override
   State<UserListWidget> createState() => _UserListWidgetState();
@@ -28,14 +28,6 @@ class _UserListWidgetState extends State<UserListWidget> {
   int _page = 1;
 
   @override
-  void didUpdateWidget(covariant UserListWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedUserId != widget.selectedUserId) {
-      setState(() {});
-    }
-  }
-
-  @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearch);
@@ -49,6 +41,14 @@ class _UserListWidgetState extends State<UserListWidget> {
       }
     });
     context.read<UserListCubit>().loadUsers(_page, _limit);
+  }
+
+  @override
+  void didUpdateWidget(covariant UserListWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedUserId != widget.selectedUserId) {
+      setState(() {});
+    }
   }
 
   void _onSearch() {
@@ -106,7 +106,7 @@ class _UserListWidgetState extends State<UserListWidget> {
                       isSelected:
                           _filteredUsers[index].id == widget.selectedUserId,
                       onTap: () => context
-                          .goNamed(AppRoute.reputationsRouteName, params: {
+                          .pushNamed(AppRoute.reputationsRouteName, params: {
                         'userId': _filteredUsers[index].id.toString()
                       }),
                       onBookmark: () {},

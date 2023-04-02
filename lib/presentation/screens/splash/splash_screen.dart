@@ -36,8 +36,8 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!GetIt.I.isRegistered<PackageInfo>()) {
-      _initApp(context).whenComplete(
-          () => context.pushReplacementNamed(AppRoute.dashBoardRouteName));
+      _initApp(context)
+          .whenComplete(() => context.goNamed(AppRoute.usersRouteName));
     }
     return Material(
       child: Container(
