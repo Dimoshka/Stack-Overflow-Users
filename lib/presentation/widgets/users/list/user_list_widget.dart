@@ -24,6 +24,8 @@ class _UserListWidgetState extends State<UserListWidget> {
   final int _limit = 30;
 
   PaginationModel<UserModel> _users = PaginationModel<UserModel>.empty();
+  Set<int> _userBookmarked = Set<int>.identity();
+
   bool _isNowLoadinMore = false;
   int _page = 1;
 
@@ -41,6 +43,7 @@ class _UserListWidgetState extends State<UserListWidget> {
       }
     });
     context.read<UserListCubit>().loadUsers(_page, _limit);
+    context.read<UserListCubit>().loadBookmarks();
   }
 
   @override
@@ -65,13 +68,15 @@ class _UserListWidgetState extends State<UserListWidget> {
   Widget build(BuildContext context) {
     return Material(
       child: BlocListener<UserListCubit, UserListState>(
-        listenWhen: (_, current) => current is UsersLoaded,
         listener: (context, state) {
           if (state is UsersLoaded) {
             _isNowLoadinMore = false;
             _users = _users.addAll(state.users);
             _filteredUsers.clear();
             _filteredUsers.addAll(_users.items);
+          } else if (state is BookmarksLoaded) {
+            _userBookmarked.clear();
+            _userBookmarked.addAll(state.userBookmarked);
           }
         },
         child: BlocBuilder<UserListCubit, UserListState>(
@@ -101,16 +106,20 @@ class _UserListWidgetState extends State<UserListWidget> {
                   child: ListView.builder(
                     controller: _scrollController,
                     itemCount: _filteredUsers.length,
-                    itemBuilder: (context, index) => UserListItemWidget(
-                      user: _filteredUsers[index],
-                      isSelected:
-                          _filteredUsers[index].id == widget.selectedUserId,
-                      onTap: () => context
-                          .pushNamed(AppRoute.reputationsRouteName, params: {
-                        'userId': _filteredUsers[index].id.toString()
-                      }),
-                      onBookmark: () {},
-                    ),
+                    itemBuilder: (context, index) {
+                      final user = _filteredUsers[index];
+                      final inBookmark = _userBookmarked.contains(user.id);
+                      return UserListItemWidget(
+                        user: user.copyWith(inBookmark),
+                        isSelected: user.id == widget.selectedUserId,
+                        onTap: () => context.goNamed(
+                            AppRoute.reputationsRouteName,
+                            params: {'userId': user.id.toString()}),
+                        onBookmark: () => context
+                            .read<UserListCubit>()
+                            .changeBookmark(user.id, inBookmark),
+                      );
+                    },
                   ),
                 ),
               ],

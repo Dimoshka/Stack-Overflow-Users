@@ -67,23 +67,24 @@ class AppRoute {
             },
             routes: [
               GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                name: usersRouteName,
-                path: '/users',
-                pageBuilder: (context, state) =>
-                    _getTransition(state: state, child: const UserListWidget()),
-              ),
-              GoRoute(
-                parentNavigatorKey: _shellNavigatorKey,
-                name: reputationsRouteName,
-                path: '/users/:userId/reputations',
-                pageBuilder: (context, state) => _getTransition(
-                    state: state,
-                    child: UserReputationsWidget(
-                        userId: state.params.containsKey('userId')
-                            ? int.tryParse(state.params['userId'] ?? '')
-                            : null)),
-              ),
+                  parentNavigatorKey: _shellNavigatorKey,
+                  name: usersRouteName,
+                  path: '/users',
+                  pageBuilder: (context, state) => _getTransition(
+                      state: state, child: const UserListWidget()),
+                  routes: [
+                    GoRoute(
+                      parentNavigatorKey: _shellNavigatorKey,
+                      name: reputationsRouteName,
+                      path: ':userId/reputations',
+                      pageBuilder: (context, state) => _getTransition(
+                          state: state,
+                          child: UserReputationsWidget(
+                              userId: state.params.containsKey('userId')
+                                  ? int.tryParse(state.params['userId'] ?? '')
+                                  : null)),
+                    ),
+                  ]),
               GoRoute(
                 parentNavigatorKey: _shellNavigatorKey,
                 name: settingsBoardRouteName,

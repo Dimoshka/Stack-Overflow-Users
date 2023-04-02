@@ -34,15 +34,26 @@ class _UserReputationsWidgetState extends State<UserReputationsWidget> {
           _scrollController.offset + 400) {
         _isNowLoadinMore = true;
         _page += 1;
-        context
-            .read<UserReputationCubit>()
-            .loadReputations(widget.userId!, _page, _limit);
+        _loadData();
       }
     });
-    context
-        .read<UserReputationCubit>()
-        .loadReputations(widget.userId!, _page, _limit);
+    _loadData();
   }
+
+  @override
+  void didUpdateWidget(covariant UserReputationsWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userId != widget.userId) {
+      _reputations = PaginationModel<UserReputationModel>.empty();
+      _isNowLoadinMore = false;
+      _page = 1;
+      _loadData();
+    }
+  }
+
+  void _loadData() => context
+      .read<UserReputationCubit>()
+      .loadReputations(widget.userId!, _page, _limit);
 
   @override
   Widget build(BuildContext context) {

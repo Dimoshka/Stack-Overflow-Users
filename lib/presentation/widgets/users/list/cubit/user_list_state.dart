@@ -23,3 +23,18 @@ class UsersLoaded extends UserListState {
   @override
   int get hashCode => users.hashCode;
 }
+
+class BookmarksLoaded extends UserListState {
+  final Set<int> userBookmarked;
+
+  const BookmarksLoaded(this.userBookmarked);
+
+  @override
+  List<Object> get props => [userBookmarked];
+
+  @override
+  bool operator ==(Object other) => false;
+
+  @override
+  int get hashCode => userBookmarked.hashCode;
+}
